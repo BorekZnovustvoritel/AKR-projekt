@@ -8,7 +8,7 @@ Posloupnost příkazů:\
 -`python3 -m venv ./venv`\
 -`source venv/bin/activate`\
 -`python3 -m pip install -r requirements.txt`\
--`python3 fact_proj.py`\
+-`python3 fact_proj.py`
 
 Instalace - Windows:
 --------------------
@@ -18,4 +18,4 @@ Posloupnost příkazů:\
 -`py -m venv ./venv`\
 -`venv\Scripts\activate`\
 -`py -m pip install -r requirements.txt`\
--`py fact_proj.py`\
+-`py fact_proj.py`
