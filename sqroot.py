@@ -15,12 +15,13 @@ def sqroot(num):
             while((pow(root,2)) < num):
                 root = int(root) + int(i)
 
-            i = i/10
+            i = i//10
         else:
             while((pow(root,2)) > num):
                 root = int(root) - int(i)
     return root
 
-root = (sqroot(int(input())))
-print(str(root*root))
-print(str(root))
+if __name__ == "__main__":
+    root = (sqroot(int(input())))
+    print(str(root*root))
+    print(str(root))
