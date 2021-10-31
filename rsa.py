@@ -13,7 +13,7 @@ class RSA_key():
         self.mod = r * s
         print("Done.")
         phi_mod = (r - 1) * (s - 1)
-        self.public = public
+        self.public = public % phi_mod
         while number.GCD(phi_mod, self.public) != 1:
             self.public = random.randint(2, phi_mod - 1)
 
