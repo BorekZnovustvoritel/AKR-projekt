@@ -2,67 +2,80 @@ from rsa import RSA_key
 from Crypto.Util import number
 from sqroot import sqroot
 import multiprocessing
-from time import perf_counter, sleep
+from time import perf_counter
 from math import floor
 
-def rsa_factorization(num: int, starting_point: int, queue: multiprocessing.Queue):
-    max_fact = starting_point
-    if max_fact % 2 == 0:
-        max_fact -= 1
-    res = max_fact % 1000
-    ref = perf_counter()
-    last_stop = 0
-    for i in range(max_fact, 1, -2):
-        if num % i == 0:
-            queue.put([i, num//i])
-        if i % 1000 == res:
-            queue.put(perf_counter() - ref)
-            last_stop = i
-            break
-    for i in range(last_stop, 1, -2):
-        if num % i == 0:
-            queue.put([i, num//i])
+class RSA_cracker():
+    def __init__(self, key: RSA_key):
+        self.cores = multiprocessing.cpu_count()
+        self.key = key
+        self.queue = multiprocessing.Queue()
+        self.p = 0
+        self.q = 0
+        self.timers_per_thousand = []
+        self.processes = []
+        self.biggest = sqroot(key.mod)
+        self.smallest = 2**((key.bitlength//2)-1)
+        self.number_count_per_proces = (self.biggest - self.smallest) // self.cores
+        self.starting_points = [int(self.biggest)]
+        for core in range(self.cores - 1):
+            self.starting_points.append(self.starting_points[-1] - self.number_count_per_proces)
+        self.private_key = None
+
+
+    def factorization(self, starting_point: int):
+        max_fact = starting_point
+        if max_fact % 2 == 0:
+            max_fact -= 1
+        res = max_fact % 1000
+        ref = perf_counter()
+        last_stop = 0
+        for i in range(max_fact, 1, -2):
+            if self.key.mod % i == 0:
+                self.queue.put([i, self.key.mod//i])
+            if i % 1000 == res:
+                self.queue.put(perf_counter() - ref)
+                last_stop = i
+                break
+        for i in range(last_stop, 1, -2):
+            if self.key.mod % i == 0:
+                self.queue.put([i, self.key.mod//i])
+
+    def stop(self):
+        for process in self.processes:
+            process.terminate()
+
+    def start(self):
+        print("Cracking, please wait...")
+        for i in range(self.cores):
+            pr = multiprocessing.Process(target=self.factorization, args=(self.starting_points[i],))
+            self.processes.append(pr)
+            pr.start()
+        temp = None
+        while temp is None:
+            temp = self.queue.get()
+            if isinstance(temp, list) and len(temp) == 2:
+                self.p, self.q = temp
+                break
+            if isinstance(temp, float):
+                self.timers_per_thousand.append(temp)
+                if len(self.timers_per_thousand) == self.cores:
+                    avg_time = sum(self.timers_per_thousand) / self.cores
+                    print(f"Estimated time: {avg_time * ((self.biggest - self.smallest) // 1000) : .3f} secs.")
+            temp = None
+        self.stop()
+        self.private_key = number.inverse(key.public, (self.p - 1) * (self.q - 1))
+
 
 if __name__ == "__main__":
     bitlength = abs(int(input("Insert bitlength of modulo:  ")))
     key = RSA_key(bitlength)
     print(f"Modulo is: {key.mod}")
     print(f"Public exponent is: {key.public}")
+    cracker = RSA_cracker(key)
     ref = perf_counter()
-    print("Cracking, please wait...")
-    queue = multiprocessing.Queue()
-    cpus = floor(0.75 * multiprocessing.cpu_count())
-    smallest = 2**((bitlength//2)-1)
-    biggest = sqroot(key.mod)
-    number_count = biggest - smallest
-    number_count_per_process = number_count//cpus
-    processes = []
-    print(f"Assigned cores: {cpus}")
-    for cpu in range(cpus):
-        pr = multiprocessing.Process(target=rsa_factorization, args=(key.mod, biggest, queue))
-        processes.append(pr)
-        pr.start()
-        biggest = biggest - number_count_per_process
-    p = 0
-    q = 0
-    timers_per_thousand = []
-    temp = None
-    while temp is None:
-        temp = queue.get()
-        if isinstance(temp, list) and len(temp) == 2:
-            p, q = temp
-            break
-        if isinstance(temp, float):
-            timers_per_thousand.append(temp)
-            if len(timers_per_thousand) == cpus:
-                avg_time = sum(timers_per_thousand) / cpus
-                print(f"Estimated time: {avg_time * ((sqroot(key.mod) - smallest) // 1000) : .3f} secs.")
-        temp = None
-    for pr in processes:
-        pr.terminate()
-    print([p, q])
+    cracker.start()
+    print(f"Found primes: {cracker.p}, {cracker.q}")
+    print(f"Found private exponent: {cracker.private_key}")
     print("Time in seconds: %.2f" % (perf_counter() - ref))
-    print("Generating Private key...")
-    priv_key = number.inverse(key.public, (p - 1) * (q - 1))
-    print(f"Private key is: {priv_key}")
     input("Program finished, press enter.")
