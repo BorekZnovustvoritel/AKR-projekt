@@ -3,7 +3,6 @@ from Crypto.Util import number
 from sqroot import sqroot
 import multiprocessing
 from time import perf_counter
-from math import floor
 
 class RSA_cracker():
     def __init__(self, key: RSA_key):
