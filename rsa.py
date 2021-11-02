@@ -3,6 +3,7 @@ from Crypto.Random import random
 
 class RSA_key():
     def __init__(self, bitlength, public=65537):
+        self.bitlength = bitlength
         if bitlength % 2 != 0:
             raise ValueError("Unable to generate RSA modulo with odd bitlength.")
         prime_bitlength = bitlength // 2
