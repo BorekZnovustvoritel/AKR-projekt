@@ -9,9 +9,18 @@ def rsa_factorization(num: int, starting_point: int, queue: multiprocessing.Queu
     max_fact = starting_point
     if max_fact % 2 == 0:
         max_fact -= 1
+    res = max_fact % 1000
+    ref = perf_counter()
+    last_stop = 0
     for i in range(max_fact, 1, -2):
         if num % i == 0:
-            #return [i, num//i]
+            queue.put([i, num//i])
+        if i % 1000 == res:
+            queue.put(perf_counter() - ref)
+            last_stop = i
+            break
+    for i in range(last_stop, 1, -2):
+        if num % i == 0:
             queue.put([i, num//i])
 
 if __name__ == "__main__":
@@ -21,7 +30,6 @@ if __name__ == "__main__":
     print(f"Public exponent is: {key.public}")
     ref = perf_counter()
     print("Cracking, please wait...")
-    #p, q = rsa_factorization(key.mod, sqroot(key.mod))
     queue = multiprocessing.Queue()
     cpus = floor(0.75 * multiprocessing.cpu_count())
     smallest = 2**((bitlength//2)-1)
@@ -37,9 +45,19 @@ if __name__ == "__main__":
         biggest = biggest - number_count_per_process
     p = 0
     q = 0
-    while p == 0:
-        sleep(0.1)
-        p, q = queue.get()
+    timers_per_thousand = []
+    temp = None
+    while temp is None:
+        temp = queue.get()
+        if isinstance(temp, list) and len(temp) == 2:
+            p, q = temp
+            break
+        if isinstance(temp, float):
+            timers_per_thousand.append(temp)
+            if len(timers_per_thousand) == cpus:
+                avg_time = sum(timers_per_thousand) / cpus
+                print(f"Estimated time: {avg_time * ((sqroot(key.mod) - smallest) // 1000) : .3f} secs.")
+        temp = None
     for pr in processes:
         pr.terminate()
     print([p, q])
