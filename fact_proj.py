@@ -13,7 +13,7 @@ class RSA_cracker():
         self.q = 0
         self.timers_per_thousand = []
         self.processes = []
-        self.biggest = sqroot(key.mod)
+        self.biggest = sqroot(self.key.mod)
         self.smallest = 2**((key.bitlength//2)-1)
         self.number_count_per_proces = (self.biggest - self.smallest) // self.cores
         self.starting_points = [int(self.biggest)]
@@ -60,15 +60,15 @@ class RSA_cracker():
                 self.timers_per_thousand.append(temp)
                 if len(self.timers_per_thousand) == self.cores:
                     avg_time = sum(self.timers_per_thousand) / self.cores
-                    print(f"Estimated time: {avg_time * ((self.biggest - self.smallest) // 1000) : .3f} secs.")
+                    print(f"Estimated time: {avg_time * ((self.biggest - self.smallest) // 1000) : .3f} s.")
             temp = None
         self.stop()
-        self.private_key = number.inverse(key.public, (self.p - 1) * (self.q - 1))
+        self.private_key = number.inverse(self.key.public, (self.p - 1) * (self.q - 1))
 
 
 if __name__ == "__main__":
-    bitlength = abs(int(input("Insert bitlength of modulo:  ")))
-    key = RSA_key(bitlength)
+    bitlength = abs(int(input("Enter bitlength of modulo:  ")))
+    key = RSA_key().generate(bitlength)
     print(f"Modulo is: {key.mod}")
     print(f"Public exponent is: {key.public}")
     cracker = RSA_cracker(key)
