@@ -12,7 +12,6 @@ class RSA_cracker():
         self.p = 0
         self.q = 0
         self.timers_per_thousand = []
-        self.processes = []
         self.biggest = sqroot(self.key.mod)
         self.smallest = 2**((key.bitlength//2)-1)
         self.number_count_per_proces = (self.biggest - self.smallest) // self.cores
@@ -40,15 +39,16 @@ class RSA_cracker():
             if self.key.mod % i == 0:
                 self.queue.put([i, self.key.mod//i])
 
-    def stop(self):
-        for process in self.processes:
+    def stop(self, processes):
+        for process in processes:
             process.terminate()
 
     def start(self):
         print("Cracking, please wait...")
+        processes = []
         for i in range(self.cores):
             pr = multiprocessing.Process(target=self.factorization, args=(self.starting_points[i],))
-            self.processes.append(pr)
+            processes.append(pr)
             pr.start()
         temp = None
         while temp is None:
@@ -62,7 +62,7 @@ class RSA_cracker():
                     avg_time = sum(self.timers_per_thousand) / self.cores
                     print(f"Estimated time: {avg_time * ((self.biggest - self.smallest) // 1000) : .3f} s.")
             temp = None
-        self.stop()
+        self.stop(processes)
         self.private_key = number.inverse(self.key.public, (self.p - 1) * (self.q - 1))
 
 
