@@ -6,19 +6,19 @@ from time import perf_counter
 
 class RSA_cracker():
     def __init__(self, key: RSA_key):
-        self.cores = multiprocessing.cpu_count()
-        self.key = key
-        self.queue = multiprocessing.Queue()
-        self.p = 0
-        self.q = 0
-        self.timers_per_thousand = []
-        self.biggest = sqroot(self.key.mod)
-        self.smallest = 2**((key.bitlength//2)-1)
-        self.number_count_per_proces = (self.biggest - self.smallest) // self.cores
-        self.starting_points = [int(self.biggest)]
+        self.cores: int = multiprocessing.cpu_count()
+        self.key: RSA_key = key
+        self.queue: multiprocessing.Queue = multiprocessing.Queue()
+        self.p: int = 0
+        self.q: int = 0
+        self.timers_per_thousand: list = []
+        self.biggest: int = sqroot(self.key.mod)
+        self.smallest: int = 2**((key.bitlength//2)-1)
+        self.number_count_per_proces: int = (self.biggest - self.smallest) // self.cores
+        self.starting_points: list = [int(self.biggest)]
         for core in range(self.cores - 1):
             self.starting_points.append(self.starting_points[-1] - self.number_count_per_proces)
-        self.private_key = None
+        self.private_key: int = None
 
 
     def factorization(self, starting_point: int):

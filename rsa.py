@@ -4,9 +4,9 @@ from Crypto.Random import random
 class RSA_key():
     default_pub = 65537
     def __init__(self):
-        self.mod = 0
-        self.public = 0
-        self.bitlength = 0
+        self.mod: int = 0
+        self.public: int = 0
+        self.bitlength: int = 0
 
     def generate(self, bitlength, public=default_pub):
         self.bitlength = bitlength
@@ -28,10 +28,10 @@ class RSA_key():
     def upload(self, mod, public=default_pub):
         self.mod = mod
         self.public = public
-        self.set_bitlength()
+        self.__set_bitlength()
         return self
 
-    def set_bitlength(self):
+    def __set_bitlength(self):
         mod = self.mod
         base = 4
         bitlength = 2
