@@ -3,6 +3,7 @@ from Crypto.Util import number
 from sqroot import sqroot
 import multiprocessing
 from time import perf_counter
+from time_format import time_format
 
 class RSA_cracker():
     def __init__(self, key: RSA_key):
@@ -19,20 +20,6 @@ class RSA_cracker():
         for core in range(self.cores - 1):
             self.starting_points.append(self.starting_points[-1] - self.number_count_per_proces)
         self.private_key: int = None
-
-    def time_format(self, seconds):
-        if(seconds >= (4361170769*pow(10,8))):
-            print("Estimated time: more than the universe is old")
-        elif(seconds >= (1.42*pow(10,17)) and seconds < (4361170769*pow(10,8))):
-            print("Estimated time: more than the Earth is old")
-        elif(seconds >= 31556926 and seconds < (1.42*pow(10,17))):
-            print("Estimated time: " + str(round(seconds/31556926,)) + " years " + str(round((seconds%31556927)/86400,)) + " days")
-        elif(seconds >= 86400 and seconds < 31556926):
-            print("Estimated time: " + str(round((seconds / 86400) % 366,)) + " days " + str(round((seconds % 86400)/3600,)) + " hours")
-        elif(seconds > 3600 and seconds < 86400):
-            print("Estimated time: " + str(round((seconds/3600)%25,)) + " hours " + str(round(seconds%3600,)) + " seconds")
-        else:
-            print("Estimated time: " + str(round(seconds,2)) + " seconds")
 
     def factorization(self, starting_point: int):
         max_fact = starting_point
@@ -74,7 +61,7 @@ class RSA_cracker():
                 if len(self.timers_per_thousand) == self.cores:
                     avg_time = sum(self.timers_per_thousand) / self.cores
                     avg_time = avg_time * ((self.biggest - self.smallest) // 1000)
-                    self.time_format(avg_time)
+                    print(f"Estimated time: {time_format(avg_time)}")
             temp = None
         self.stop(processes)
         self.private_key = number.inverse(self.key.public, (self.p - 1) * (self.q - 1))
