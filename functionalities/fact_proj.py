@@ -69,21 +69,24 @@ class RSA_cracker():
                 pr = multiprocessing.Process(target=self.factorization, args=(self.starting_points[i],))
             processes.append(pr)
             pr.start()
-        temp = None
-        while temp is None:
-            temp = self.queue.get()
-            if isinstance(temp, list) and len(temp) == 2:
-                self.p, self.q = temp
-                break
-            if isinstance(temp, float):
-                self.timers_per_thousand.append(temp)
-                if len(self.timers_per_thousand) == self.cores:
-                    avg_time = sum(self.timers_per_thousand) / self.cores
-                    avg_time = avg_time * ((self.biggest - self.smallest) // 1000)
-                    print(f"Estimated time: {time_format(avg_time)}")
+        try:
             temp = None
-        self.stop(processes)
-        self.private_key = number.inverse(self.key.public, (self.p - 1) * (self.q - 1))
+            while temp is None:
+                temp = self.queue.get()
+                if isinstance(temp, list) and len(temp) == 2:
+                    self.p, self.q = temp
+                    break
+                if isinstance(temp, float):
+                    self.timers_per_thousand.append(temp)
+                    if len(self.timers_per_thousand) == self.cores:
+                        avg_time = sum(self.timers_per_thousand) / self.cores
+                        avg_time = avg_time * ((self.biggest - self.smallest) // 1000)
+                        print(f"Estimated time: {time_format(avg_time)}")
+                temp = None
+            self.private_key = number.inverse(self.key.public, (self.p - 1) * (self.q - 1))
+        finally:
+            self.stop(processes)
+
 
 
 if __name__ == "__main__":

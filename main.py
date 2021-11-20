@@ -16,12 +16,15 @@ def _crack(key: RSA_key):
     cracker = RSA_cracker(key)
     print(f"Assigned cores: {cracker.cores}")
     ref = perf_counter()
-    cracker.start()
-    print(f"Found primes: {cracker.p}, {cracker.q}.")
-    print(f"Found private exponent: {cracker.private_key}.")
-    print(f"Private key in hex: {hex(cracker.private_key)}")
-    print(f"Cracking took: {(perf_counter() - ref) : .3f} s.") #TODO implementace časového formátu
-    #TODO implementace JSON ukládání
+    try:
+        cracker.start()
+        print(f"Found primes: {cracker.p}, {cracker.q}.")
+        print(f"Found private exponent: {cracker.private_key}.")
+        print(f"Private key in hex: {hex(cracker.private_key)}")
+        print(f"Cracking took: {(perf_counter() - ref) : .3f} s.")
+        # TODO implementace JSON ukládání
+    except KeyboardInterrupt:
+        print(f"Cancelled after {(perf_counter() - ref) : .3f} s.")
 
 if __name__ == "__main__":
     print(logo)
