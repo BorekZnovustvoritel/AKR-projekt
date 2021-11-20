@@ -58,8 +58,7 @@ class RSA_cracker():
         for process in processes:
             process.terminate()
 
-    def start(self, with_prime_test: bool = False):
-        print("Cracking, please wait...")
+    def start(self, with_prime_test: bool = False, silent: bool = False):
         processes = []
         for i in range(self.cores):
             pr: multiprocessing.Process = None
@@ -81,7 +80,8 @@ class RSA_cracker():
                     if len(self.timers_per_thousand) == self.cores:
                         avg_time = sum(self.timers_per_thousand) / self.cores
                         avg_time = avg_time * ((self.biggest - self.smallest) // 1000)
-                        print(f"Estimated time: {time_format(avg_time)}")
+                        if not silent:
+                            print(f"Estimated time: {time_format(avg_time)}")
                 temp = None
             self.private_key = number.inverse(self.key.public, (self.p - 1) * (self.q - 1))
         finally:
@@ -96,6 +96,7 @@ if __name__ == "__main__":
     print(f"Public exponent is: {key.public}")
     cracker = RSA_cracker(key)
     ref = perf_counter()
+    print("Cracking, please wait...")
     cracker.start()
     print(f"Found primes: {cracker.p}, {cracker.q}")
     print(f"Found private exponent: {cracker.private_key}")

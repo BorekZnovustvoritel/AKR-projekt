@@ -1,22 +1,15 @@
 from functionalities.rsa import RSA_key
 from functionalities.fact_proj import RSA_cracker
 from time import perf_counter
+from functionalities.resources import logo
 
-logo = """
-  _____   _____            _____                _             
- |  __ \ / ____|  /\      / ____|              | |            
- | |__) | (___   /  \    | |     _ __ __ _  ___| | _____ _ __ 
- |  _  / \___ \ / /\ \   | |    | '__/ _` |/ __| |/ / _ \ '__|
- | | \ \ ____) / ____ \  | |____| | | (_| | (__|   <  __/ |   
- |_|  \_\_____/_/    \_\  \_____|_|  \__,_|\___|_|\_\___|_|   
-                                                              
-                                                              """
 minimal_bitlength = 8
 def _crack(key: RSA_key):
     cracker = RSA_cracker(key)
     print(f"Assigned cores: {cracker.cores}")
     ref = perf_counter()
     try:
+        print("Cracking, please wait...")
         cracker.start()
         print(f"Found primes: {cracker.p}, {cracker.q}.")
         print(f"Found private exponent: {cracker.private_key}.")
@@ -39,9 +32,9 @@ if __name__ == "__main__":
         #MAIN SWITCH
         if inp == 1: #SHOWCASE
             inp = 0
-            while inp < minimal_bitlength:
+            while inp < minimal_bitlength or inp % 2 == 1:
                 try:
-                    inp = int(input(f"Enter bitlength of the RSA modulo that is greater or equal to {minimal_bitlength}: "))
+                    inp = int(input(f"Enter bitlength of the RSA modulo that is greater or equal to {minimal_bitlength} (must be even): "))
                 except ValueError:
                     continue
             key = RSA_key().generate(inp)
