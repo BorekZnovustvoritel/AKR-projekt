@@ -1,6 +1,6 @@
 from time import perf_counter
-from rsa import RSA_key
-from fact_proj import RSA_cracker
+from functionalities.rsa import RSA_key
+from functionalities.fact_proj import RSA_cracker
 
 if __name__ == "__main__":
     bitlength = 40

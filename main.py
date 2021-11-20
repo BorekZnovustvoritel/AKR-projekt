@@ -1,5 +1,5 @@
-from rsa import RSA_key
-from fact_proj import RSA_cracker
+from functionalities.rsa import RSA_key
+from functionalities.fact_proj import RSA_cracker
 from time import perf_counter
 
 logo = """
@@ -38,7 +38,7 @@ if __name__ == "__main__":
             inp = 0
             while inp < minimal_bitlength:
                 try:
-                    inp = int(input(f"Enter bitlength of the RSA modulo that is greater than {minimal_bitlength}: "))
+                    inp = int(input(f"Enter bitlength of the RSA modulo that is greater or equal to {minimal_bitlength}: "))
                 except ValueError:
                     continue
             key = RSA_key().generate(inp)
