@@ -4,6 +4,7 @@ from sqroot import sqroot
 import multiprocessing
 from time import perf_counter
 from time_format import time_format
+from prime_test import gen_primes
 
 class RSA_cracker():
     def __init__(self, key: RSA_key):
@@ -39,15 +40,33 @@ class RSA_cracker():
             if self.key.mod % i == 0:
                 self.queue.put([i, self.key.mod//i])
 
+    def factorization_with_prime_test(self, starting_point: int):
+        ref = perf_counter()
+        last_stop = 0
+        for i in gen_primes(starting_point):
+            if self.key.mod % i == 0:
+                self.queue.put([i, self.key.mod // i])
+            if starting_point - i >= 1000:
+                self.queue.put(perf_counter() - ref)
+                last_stop = i
+                break
+        for i in gen_primes(last_stop):
+            if self.key.mod % i == 0:
+                self.queue.put([i, self.key.mod//i])
+
     def stop(self, processes):
         for process in processes:
             process.terminate()
 
-    def start(self):
+    def start(self, with_prime_test: bool = False):
         print("Cracking, please wait...")
         processes = []
         for i in range(self.cores):
-            pr = multiprocessing.Process(target=self.factorization, args=(self.starting_points[i],))
+            pr: multiprocessing.Process = None
+            if with_prime_test:
+                pr = multiprocessing.Process(target=self.factorization_with_prime_test, args=(self.starting_points[i],))
+            else:
+                pr = multiprocessing.Process(target=self.factorization, args=(self.starting_points[i],))
             processes.append(pr)
             pr.start()
         temp = None

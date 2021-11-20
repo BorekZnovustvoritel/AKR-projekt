@@ -34,7 +34,7 @@ Před každým spuštěním kódu ve Windows:
 
 Před každým spuštěním kódu v Linux:
 --------------------------------------
-- Přemístit se do adresáře\
+- Přemístit se do adresáře
 - `python3 venv/bin/activate`
 - `python3 main.py`
 
