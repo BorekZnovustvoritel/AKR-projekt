@@ -130,3 +130,6 @@ dmypy.json
 
 # IDEA file from PyCharm
 .idea/
+
+# json keys
+*.json

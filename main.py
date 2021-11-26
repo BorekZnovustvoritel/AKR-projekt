@@ -1,9 +1,8 @@
 from functionalities.rsa import RSA_key
 from functionalities.fact_proj import RSA_cracker
 from time import perf_counter
-from functionalities.resources import logo
+from functionalities.resources import logo, minimal_bitlength
 
-minimal_bitlength = 8
 def _crack(key: RSA_key):
     cracker = RSA_cracker(key)
     print(f"Assigned cores: {cracker.cores}")
@@ -13,9 +12,14 @@ def _crack(key: RSA_key):
         cracker.start()
         print(f"Found primes: {cracker.p}, {cracker.q}.")
         print(f"Found private exponent: {cracker.private_key}.")
-        print(f"Private key in hex: {hex(cracker.private_key)}")
         print(f"Cracking took: {(perf_counter() - ref) : .3f} s.")
-        # TODO implementace JSON ukládání
+        path = input("Enter name of file to save this key. Dismiss by pressing just enter.")
+        if path != "":
+            path = cracker.save_key(path)
+            if path:
+                print(f"Key saved to '{path}'")
+            else:
+                print(f"Couldn't save  key to: '{path}'")
     except KeyboardInterrupt:
         print(f"Cancelled after {(perf_counter() - ref) : .3f} s.")
 

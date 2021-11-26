@@ -1,5 +1,6 @@
-
 def sqroot(num):
+    """Natural square root (decimal points are ignored).
+    Needed because math.sqrt breaks with numbers bigger than 2 to the power of 1024."""
     lenght = len(str(num))
     half = str(num)[0:(lenght//2)]
     #print(half)
