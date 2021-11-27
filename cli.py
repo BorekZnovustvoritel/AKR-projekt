@@ -2,7 +2,7 @@ import argparse
 from functionalities.rsa import RSA_key
 from functionalities.fact_proj import RSA_cracker
 from time import perf_counter
-from functionalities.resources import logo, minimal_bitlength
+from functionalities.resources import *
 
 if __name__ == "__main__": # CLI standardised version of the app
     parser = argparse.ArgumentParser(description='RSA Cracker')
@@ -23,7 +23,7 @@ if __name__ == "__main__": # CLI standardised version of the app
 
     key = RSA_key()
     if ex_key is not None:
-        if ex_key[0] < 2 or ex_key[1] < 2:
+        if ex_key[0] < minimal_mod or ex_key[1] < minimal_pub:
             print("Invalid RSA key provided.")
             exit()  # Filtering invalid inputs. Smaller inputs break the code. Bigger invalid inputs still can.
         key.upload(ex_key[0], ex_key[1])

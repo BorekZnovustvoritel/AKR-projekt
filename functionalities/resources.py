@@ -8,3 +8,5 @@ logo = """
 
                                                               """
 minimal_bitlength = 8
+minimal_mod = 21
+minimal_pub = 2

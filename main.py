@@ -1,7 +1,7 @@
 from functionalities.rsa import RSA_key
 from functionalities.fact_proj import RSA_cracker
 from time import perf_counter
-from functionalities.resources import logo, minimal_bitlength
+from functionalities.resources import *
 
 def _crack(key: RSA_key):
     cracker = RSA_cracker(key)
@@ -52,13 +52,13 @@ if __name__ == "__main__":
 
         else: #CRACK EXTERNAL KEY
             mod = 0
-            while mod < 33:
+            while mod < minimal_mod:
                 try:
-                    mod = int(input("Enter modulo of the RSA cryptosystem: "))
+                    mod = int(input(f"Enter modulo of the RSA cryptosystem (bigger than {minimal_mod}): "))
                 except ValueError:
                     continue
             pub = 0
-            while pub < 2:
+            while pub < minimal_pub:
                 temp = input(f"Enter public key. Leave blank for value {RSA_key.default_pub}: ")
                 if temp == '':
                     pub = RSA_key.default_pub
