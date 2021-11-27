@@ -8,7 +8,7 @@ Posloupnost příkazů:
 - `python3 -m venv ./venv`
 - `source venv/bin/activate`
 - `python3 -m pip install -r requirements.txt`
-- `python3 main.py`
+- `python3 cli.py --help` (nebo `python3 main.py` pro interaktivní verzi)
 
 Instalace - Windows:
 --------------------
@@ -18,7 +18,7 @@ Posloupnost příkazů:
 - `py -m venv ./venv`
 - `venv\Scripts\activate`
 - `py -m pip install -r requirements.txt`
-- `py main.py`
+- `py cli.py --help` (nebo `py main.py` pro interaktivní verzi)
 
 
 Před každým otevřením kódu je nutné v root adrsáři repa v git bashi zadat:
@@ -30,13 +30,13 @@ Před každým spuštěním kódu ve Windows:
 --------------------------------------
 - Přemístit se do adresáře
 - `py venv\Scripts\activate`
-- `py main.py`
+- `py cli.py --help`
 
 Před každým spuštěním kódu v Linux:
 --------------------------------------
 - Přemístit se do adresáře
 - `python3 venv/bin/activate`
-- `python3 main.py`
+- `python3 main.py --help`
 
 Před každou úpravou kódu je dále nutné:
 ---------------------------------------
