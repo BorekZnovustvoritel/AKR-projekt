@@ -1,4 +1,4 @@
-def time_format(seconds):#function that takes time in seconds, convert it into meaningful units and return it
+def time_format(seconds):#function that takes time in seconds, convert it into meaningful units and return it 
     if (seconds >= (4361170769 * pow(10, 8))):
         return "more than the universe is old"
     elif (seconds >= (1.42 * pow(10, 17)) and seconds < (4361170769 * pow(10, 8))):
